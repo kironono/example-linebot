@@ -3,11 +3,11 @@ class MessageReceivesController < ApplicationController
   protect_from_forgery with: :null_session
 
   def callback
-    logger.error params
     from = params[:result][0][:content][:from]
     text = params[:result][0][:content][:text]
 
-    response_message(from, text)
+    message = params.to_s
+    response_message(from, message)
     render json: [], status: :ok
   end
 
