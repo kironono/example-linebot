@@ -3,9 +3,9 @@ class MessageReceivesController < ApplicationController
   protect_from_forgery with: :null_session
 
   def callback
-    result = params[:result].first
-    from = result[:content][:from]
-    text = result[:content][:text]
+    puts params
+    from = params[:result][0][:content][:from]
+    text = params[:result][0][:content][:text]
 
     response_message(from, text)
     render json: [], status: :ok
