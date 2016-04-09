@@ -1,37 +1,27 @@
 class MessageReceivesController < ApplicationController
 
   protect_from_forgery with: :null_session
+  before_action :get_client
 
   def callback
-    from = params[:result][0][:content][:from]
-    text = params[:result][0][:content][:text]
-
-    message = params.to_s
-    response_message(from, message)
+    params[:result].each do |result|
+      from = result[:content][:from]
+      text = result[:content][:text]
+      @client.send_text_message(from, text) if text.present?
+    end
     render json: [], status: :ok
   end
 
   private
 
-  def response_message(to, message)
-    RestClient.proxy = ENV['FIXIE_URL']
-    request_headers = {
-      "Content-Type": "application/json",
-      "X-Line-ChannelID": ENV['LINE_CHANNEL_ID'],
-      "X-Line-ChannelSecret": ENV['LINE_CHANNEL_SECRET'],
-      "X-Line-Trusted-User-With-ACL": ENV['LINE_CHANNEL_MID'],
+  def get_client
+    options = {
+      channel_id: ENV['LINE_CHANNEL_ID'],
+      channel_secret: ENV['LINE_CHANNEL_SECRET'],
+      channel_mid: ENV['LINE_CHANNEL_MID'],
+      proxy: ENV['FIXIE_URL'],
     }
-    request_params = {
-      to: [to],
-      toChannel: 1383378250,
-      eventType: "138311608800106203",
-      content: {
-        contentType: 1,
-        toType: 1,
-        text: message,
-      }
-    }
-    RestClient.post 'https://trialbot-api.line.me/v1/events', request_params.to_json, request_headers
+    @client = LineBotApi::Client.new(options)
   end
 
 end
