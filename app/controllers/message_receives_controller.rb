@@ -31,7 +31,7 @@ class MessageReceivesController < ApplicationController
         text: message,
       }
     }
-    RestClient.post 'https://trialbot-api.line.me/v1/events' request_params.to_json, request_headers
+    RestClient.post 'https://trialbot-api.line.me/v1/events', request_params.to_json, request_headers
   end
 
 end
