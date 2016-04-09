@@ -3,7 +3,7 @@ class MessageReceivesController < ApplicationController
   protect_from_forgery with: :null_session
 
   def callback
-    puts params
+    logger.error params
     from = params[:result][0][:content][:from]
     text = params[:result][0][:content][:text]
 
