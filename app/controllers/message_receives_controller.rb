@@ -3,8 +3,6 @@ class MessageReceivesController < ApplicationController
   protect_from_forgery with: :null_session
 
   def callback
-    http.set_debug_output $stderr
-
     result = params[:result].first
     from = result[:content][:from]
     text = result[:content][:text]
